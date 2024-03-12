@@ -8,19 +8,27 @@ gleam add xmleam
 ```
 ```gleam
 import gleam/io
-import gleam/result
-import xmleam/builder.{Opt}
+import gleam/result.{unwrap}
+import xmleam/builder.{Opt, basic_tag, opts_tag}
 
 pub fn main() {
   let document = {
-    builder.opts_cont_tag(
-      "?xml",
-      [Opt("version", "1.0"), Opt("encoding", "UTF-8")],
-      { result.unwrap(builder.basic_tag("hello", "world"), "Encoding Error") },
-    )
+    builder.xml("1.0", "UTF-8", [
+      unwrap(basic_tag("Hello", ["World"]), "ENCODING ERROR"),
+      unwrap(
+        opts_tag("link", [Opt("href", "https://example.com")]),
+        "ENCODING ERROR",
+      ),
+    ])
   }
-  io.debug(document)
+  io.print(result.unwrap(document, "ENCODING Error"))
 }
+
+//Result
+<?xml version="1.0" encoding="UTF-8"?> 
+<Hello> World </Hello> 
+<link href="https://example.com" />
+
 ```
 
 Further documentation can be found at <https://hexdocs.pm/xmleam>.
