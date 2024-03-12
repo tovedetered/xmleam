@@ -7,10 +7,19 @@
 gleam add xmleam
 ```
 ```gleam
-import xmleam
+import gleam/io
+import gleam/result
+import xmleam/builder.{Opt}
 
 pub fn main() {
-  // TODO: An example of the project in use
+  let document = {
+    builder.opts_cont_tag(
+      "?xml",
+      [Opt("version", "1.0"), Opt("encoding", "UTF-8")],
+      { result.unwrap(builder.basic_tag("hello", "world"), "Encoding Error") },
+    )
+  }
+  io.debug(document)
 }
 ```
 
@@ -21,5 +30,4 @@ Further documentation can be found at <https://hexdocs.pm/xmleam>.
 ```sh
 gleam run   # Run the project
 gleam test  # Run the tests
-gleam shell # Run an Erlang shell
 ```

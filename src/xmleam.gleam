@@ -1,14 +1,14 @@
 import gleam/io
-import xmleam/builder
+import gleam/result
+import xmleam/builder.{Opt}
 
 pub fn main() {
-  let tag = builder.basic_tag("pubDate", "Tue Mar 12")
-  let complex_tag =
+  let document = {
     builder.opts_cont_tag(
-      "enclosure",
-      [builder.Opt("url", "https://example.com")],
-      "hello",
+      "?xml",
+      [Opt("version", "1.0"), Opt("encoding", "UTF-8")],
+      { result.unwrap(builder.basic_tag("hello", "world"), "Encoding Error") },
     )
-  io.debug(complex_tag)
-  io.debug(tag)
+  }
+  io.debug(document)
 }
