@@ -12,18 +12,21 @@
 ////    <hello> world </hello>
 //// </name>
 
-import gleam/string_builder
+import gleam/string_builder.{append, append_builder}
 import gleam/string
 import gleam/result
 import gleam/bool
 
 pub type BuilderError {
   ContentsEmpty
-  TagNameEmpty
+  LabelEmpty
   OptionsEmpty
   VersionEmpty
   EncodingEmpty
   TagPlacedBeforeNew
+  InnerEmpty
+
+  NOTAPPLICABLE
 }
 
 pub type XmlBuilder =
@@ -64,29 +67,59 @@ pub fn new() -> XmlBuilder {
 /// this is a basic tag that takes in a label and contents and a 
 /// document in the form of an XmlBuilder
 /// this is intended to be used in a pipe chain
-/// ie. new_document()
+/// ie. new_document() 
 ///     |> tag("hello", "world")
 /// Throws an error if anything is left blank
 pub fn tag(label: String, contents: String, document: XmlBuilder) -> XmlBuilder {
   let label_empty = string.is_empty(label)
-  use <- bool.guard(when: label_empty, return: Error(TagNameEmpty))
+  use <- bool.guard(when: label_empty, return: Error(LabelEmpty))
   let contents_empty = string.is_empty(contents)
   use <- bool.guard(when: contents_empty, return: Error(ContentsEmpty))
   let documents_empty =
     string_builder.is_empty(result.unwrap(document, string_builder.new()))
   use <- bool.guard(when: documents_empty, return: Error(TagPlacedBeforeNew))
 
-  string_builder.new()
-  |> string_builder.append("<")
-  |> string_builder.append(label)
-  |> string_builder.append("> ")
-  |> string_builder.append(contents)
-  |> string_builder.append(" </")
-  |> string_builder.append(label)
-  |> string_builder.append("> \n")
-  |> string_builder.append_builder(to: result.unwrap(
-    document,
-    string_builder.new(),
-  ))
-  |> Ok
+  case result.is_error(document) {
+    True -> Error(result.unwrap_error(document, NOTAPPLICABLE))
+
+    False ->
+      string_builder.new()
+      |> append("<")
+      |> append(label)
+      |> append("> ")
+      |> append(contents)
+      |> append(" </")
+      |> append(label)
+      |> append("> \n")
+      |> append_builder(result.unwrap(document, string_builder.new()))
+      |> Ok
+  }
+}
+
+pub fn block_tag(label: String, inner: XmlBuilder, document: XmlBuilder) {
+  let label_empty = string.is_empty(label)
+  use <- bool.guard(when: label_empty, return: Error(LabelEmpty))
+  let inner_empty =
+    string_builder.is_empty(result.unwrap(inner, string_builder.new()))
+  use <- bool.guard(when: inner_empty, return: Error(InnerEmpty))
+
+  case result.is_error(document) {
+    True -> Error(result.unwrap_error(document, NOTAPPLICABLE))
+
+    False ->
+      case result.is_error(inner) {
+        True -> Error(result.unwrap_error(inner, NOTAPPLICABLE))
+
+        False ->
+          string_builder.new()
+          |> append("<")
+          |> append(label)
+          |> append("> \n \t")
+          |> append_builder(result.unwrap(inner, string_builder.new()))
+          |> append("</")
+          |> append(label)
+          |> append("> \n")
+          |> Ok
+      }
+  }
 }
