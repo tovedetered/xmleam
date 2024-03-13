@@ -12,5 +12,5 @@ pub fn main() {
       ),
     ])
   }
-  io.print(result.unwrap(document, "ENCODING Error"))
+  io.debug(result.unwrap(document, "ENCODING Error"))
 }
