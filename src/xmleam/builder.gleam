@@ -19,6 +19,7 @@ pub type Option {
 /// Ex. builder.basic_tag("pubDate", "12 Mar 2024") to
 /// <pubDate> 12 Mar 2024 <pubDate> \n
 /// basic_tag(tag_name, contents)
+@deprecated("Please Migrate to xml_builder module")
 pub fn basic_tag(
   tag_name: String,
   contents: List(String),
@@ -48,6 +49,7 @@ pub fn basic_tag(
 /// "IDK why you would use this")
 /// -> 
 /// <enclosure url="https://example.com"> IDK why you would use this </enclosure>
+@deprecated("Please Migrate to xml_builder module")
 pub fn option_content_tag(
   tag_name: String,
   options: List(Option),
@@ -75,6 +77,7 @@ pub fn option_content_tag(
   |> Ok
 }
 
+@deprecated("Please Migrate to xml_builder module")
 pub fn option_tag(
   tag_name: String,
   options: List(Option),
@@ -96,6 +99,7 @@ pub fn option_tag(
 ///This is the header tag REQUIRED by all valid XML documents
 /// Usage: xml(version (1.0), encoding (UTF-8), 
 /// document: List(String) -> [basic_tag(...), basic_tag(...)])
+@deprecated("Please Migrate to xml_builder module")
 pub fn xml(
   version: String,
   encoding: String,
