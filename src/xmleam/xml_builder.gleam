@@ -25,6 +25,7 @@ pub type BuilderError {
   EncodingEmpty
   TagPlacedBeforeNew
   InnerEmpty
+  EmptyDocument
 
   NOTAPPLICABLE
 }
@@ -96,6 +97,15 @@ pub fn tag(label: String, contents: String, document: XmlBuilder) -> XmlBuilder 
   }
 }
 
+/// this starts a block which is a tag with other tags inside of it
+/// ie. <owner>
+///         <email>example@example.com</email>
+///     </owner>
+/// 
+/// Usage: |>block_tag("owner", {
+///     new()
+///     |> tag("email", "example@example.com")
+/// })
 pub fn block_tag(label: String, inner: XmlBuilder, document: XmlBuilder) {
   let label_empty = string.is_empty(label)
   use <- bool.guard(when: label_empty, return: Error(LabelEmpty))
@@ -122,4 +132,17 @@ pub fn block_tag(label: String, inner: XmlBuilder, document: XmlBuilder) {
           |> Ok
       }
   }
+}
+
+/// this one ends the xml document
+/// takes in the Xml Document and outputs
+///  a Result(String, BuilderError)
+pub fn end_xml(document: XmlBuilder) -> Result(String, BuilderError) {
+  let document_empty =
+    string_builder.is_empty(result.unwrap(document, string_builder.new()))
+  use <- bool.guard(when: document_empty, return: Error(EmptyDocument))
+
+  result.unwrap(document, string_builder.new())
+  |> string_builder.to_string
+  |> Ok
 }
