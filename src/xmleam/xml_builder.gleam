@@ -107,8 +107,8 @@ pub fn tag(document: XmlBuilder, label: String, contents: String) -> XmlBuilder 
 pub fn option_content_tag(
   document: XmlBuilder,
   label: String,
-  contents: String,
   options: List(Option),
+  contents: String,
 ) {
   let label_empty = string.is_empty(label)
   use <- bool.guard(when: label_empty, return: Error(LabelEmpty))
