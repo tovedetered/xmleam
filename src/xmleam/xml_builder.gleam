@@ -16,6 +16,7 @@ import gleam/string_builder.{append, append_builder}
 import gleam/string
 import gleam/result
 import gleam/bool
+import gleam/list
 
 pub type BuilderError {
   ContentsEmpty
@@ -28,6 +29,10 @@ pub type BuilderError {
   EmptyDocument
 
   NOTAPPLICABLE
+}
+
+pub type Option {
+  Opt(label: String, value: String)
 }
 
 pub type XmlBuilder =
@@ -97,6 +102,76 @@ pub fn tag(label: String, contents: String, document: XmlBuilder) -> XmlBuilder 
   }
 }
 
+/// This is for a tag with options and content
+/// ie. <hello world="hi"> ?? <hello> 
+pub fn option_content_tag(
+  label: String,
+  contents: String,
+  options: List(Option),
+  document: XmlBuilder,
+) {
+  let label_empty = string.is_empty(label)
+  use <- bool.guard(when: label_empty, return: Error(LabelEmpty))
+  let contents_empty = string.is_empty(contents)
+  use <- bool.guard(when: contents_empty, return: Error(ContentsEmpty))
+  let documents_empty =
+    string_builder.is_empty(result.unwrap(document, string_builder.new()))
+  use <- bool.guard(when: documents_empty, return: Error(TagPlacedBeforeNew))
+  let options_empty = list.is_empty(options)
+  use <- bool.guard(when: options_empty, return: Error(OptionsEmpty))
+
+  case result.is_error(document) {
+    True -> Error(result.unwrap_error(document, NOTAPPLICABLE))
+
+    False ->
+      string_builder.new()
+      |> append("<")
+      |> append(label)
+      |> append_builder(string_options(options))
+      |> append("> ")
+      |> append(contents)
+      |> append(" </")
+      |> append(label)
+      |> append("> \n")
+      |> append_builder(result.unwrap(document, string_builder.new()))
+      |> Ok
+  }
+}
+
+///This is a tag with options that self-closes 
+/// ie. <link href="https://example.com" />
+pub fn option_tag(label: String, options: List(Option), document: XmlBuilder) {
+  let label_empty = string.is_empty(label)
+  use <- bool.guard(when: label_empty, return: Error(LabelEmpty))
+  let documents_empty =
+    string_builder.is_empty(result.unwrap(document, string_builder.new()))
+  use <- bool.guard(when: documents_empty, return: Error(TagPlacedBeforeNew))
+  let options_empty = list.is_empty(options)
+  use <- bool.guard(when: options_empty, return: Error(OptionsEmpty))
+
+  case result.is_error(document) {
+    True -> Error(result.unwrap_error(document, NOTAPPLICABLE))
+
+    False ->
+      string_builder.new()
+      |> append("<")
+      |> append(label)
+      |> append_builder(string_options(options))
+      |> append(" />\n")
+      |> append_builder(result.unwrap(document, string_builder.new()))
+      |> Ok
+  }
+}
+
+fn string_options(options: List(Option)) {
+  list.map(options, option_to_string)
+  |> string_builder.concat
+}
+
+fn option_to_string(option: Option) {
+  string_builder.from_strings([" ", option.label, "=\"", option.value, "\""])
+}
+
 /// this starts a block which is a tag with other tags inside of it
 /// ie. <owner>
 ///         <email>example@example.com</email>
@@ -134,9 +209,45 @@ pub fn block_tag(label: String, inner: XmlBuilder, document: XmlBuilder) {
   }
 }
 
+/// This is a block tag that has options
+pub fn option_block_tag(
+  label: String,
+  inner: XmlBuilder,
+  options: List(Option),
+  document: XmlBuilder,
+) {
+  let label_empty = string.is_empty(label)
+  use <- bool.guard(when: label_empty, return: Error(LabelEmpty))
+  let inner_empty =
+    string_builder.is_empty(result.unwrap(inner, string_builder.new()))
+  use <- bool.guard(when: inner_empty, return: Error(InnerEmpty))
+  let documents_empty =
+    string_builder.is_empty(result.unwrap(document, string_builder.new()))
+  use <- bool.guard(when: documents_empty, return: Error(TagPlacedBeforeNew))
+  let options_empty = list.is_empty(options)
+  use <- bool.guard(when: options_empty, return: Error(OptionsEmpty))
+
+  case result.is_error(document) {
+    True -> Error(result.unwrap_error(document, NOTAPPLICABLE))
+
+    False ->
+      string_builder.new()
+      |> append("<")
+      |> append(label)
+      |> append_builder(string_options(options))
+      |> append("> ")
+      |> append_builder(result.unwrap(inner, string_builder.new()))
+      |> append(" </")
+      |> append(label)
+      |> append("> \n")
+      |> append_builder(result.unwrap(document, string_builder.new()))
+      |> Ok
+  }
+}
+
 /// this one ends the xml document
 /// takes in the Xml Document and outputs
-///  a Result(String, BuilderError)
+/// a Result(String, BuilderError)
 pub fn end_xml(document: XmlBuilder) -> Result(String, BuilderError) {
   let document_empty =
     string_builder.is_empty(result.unwrap(document, string_builder.new()))
