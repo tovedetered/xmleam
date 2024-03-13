@@ -1,16 +1,17 @@
 import gleam/io
-import gleam/result.{unwrap}
-import xmleam/builder.{Opt, basic_tag, opts_tag}
+import xmleam/xml_builder.{block_tag, new, tag}
 
 pub fn main() {
   let document = {
-    builder.xml("1.0", "UTF-8", [
-      unwrap(basic_tag("Hello", ["World"]), "ENCODING ERROR"),
-      unwrap(
-        opts_tag("link", [Opt("href", "https://example.com")]),
-        "ENCODING ERROR",
-      ),
-    ])
+    xml_builder.new_document()
+    |> block_tag(
+      "hello",
+      new()
+        |> tag("world", "Earth")
+        |> xml_builder.end,
+    )
+    |> xml_builder.end_xml()
   }
-  io.debug(result.unwrap(document, "ENCODING Error"))
+
+  io.debug(document)
 }

@@ -76,14 +76,11 @@ pub fn new() -> XmlBuilder {
 /// ie. new_document() 
 ///     |> tag("hello", "world")
 /// Throws an error if anything is left blank
-pub fn tag(label: String, contents: String, document: XmlBuilder) -> XmlBuilder {
+pub fn tag(document: XmlBuilder, label: String, contents: String) -> XmlBuilder {
   let label_empty = string.is_empty(label)
   use <- bool.guard(when: label_empty, return: Error(LabelEmpty))
   let contents_empty = string.is_empty(contents)
   use <- bool.guard(when: contents_empty, return: Error(ContentsEmpty))
-  let documents_empty =
-    string_builder.is_empty(result.unwrap(document, string_builder.new()))
-  use <- bool.guard(when: documents_empty, return: Error(TagPlacedBeforeNew))
 
   case result.is_error(document) {
     True -> Error(result.unwrap_error(document, NOTAPPLICABLE))
@@ -105,18 +102,15 @@ pub fn tag(label: String, contents: String, document: XmlBuilder) -> XmlBuilder 
 /// This is for a tag with options and content
 /// ie. <hello world="hi"> ?? <hello> 
 pub fn option_content_tag(
+  document: XmlBuilder,
   label: String,
   contents: String,
   options: List(Option),
-  document: XmlBuilder,
 ) {
   let label_empty = string.is_empty(label)
   use <- bool.guard(when: label_empty, return: Error(LabelEmpty))
   let contents_empty = string.is_empty(contents)
   use <- bool.guard(when: contents_empty, return: Error(ContentsEmpty))
-  let documents_empty =
-    string_builder.is_empty(result.unwrap(document, string_builder.new()))
-  use <- bool.guard(when: documents_empty, return: Error(TagPlacedBeforeNew))
   let options_empty = list.is_empty(options)
   use <- bool.guard(when: options_empty, return: Error(OptionsEmpty))
 
@@ -140,12 +134,9 @@ pub fn option_content_tag(
 
 ///This is a tag with options that self-closes 
 /// ie. <link href="https://example.com" />
-pub fn option_tag(label: String, options: List(Option), document: XmlBuilder) {
+pub fn option_tag(document: XmlBuilder, label: String, options: List(Option)) {
   let label_empty = string.is_empty(label)
   use <- bool.guard(when: label_empty, return: Error(LabelEmpty))
-  let documents_empty =
-    string_builder.is_empty(result.unwrap(document, string_builder.new()))
-  use <- bool.guard(when: documents_empty, return: Error(TagPlacedBeforeNew))
   let options_empty = list.is_empty(options)
   use <- bool.guard(when: options_empty, return: Error(OptionsEmpty))
 
@@ -181,7 +172,7 @@ fn option_to_string(option: Option) {
 ///     new()
 ///     |> tag("email", "example@example.com")
 /// })
-pub fn block_tag(label: String, inner: XmlBuilder, document: XmlBuilder) {
+pub fn block_tag(document: XmlBuilder, label: String, inner: XmlBuilder) {
   let label_empty = string.is_empty(label)
   use <- bool.guard(when: label_empty, return: Error(LabelEmpty))
   let inner_empty =
@@ -221,9 +212,6 @@ pub fn option_block_tag(
   let inner_empty =
     string_builder.is_empty(result.unwrap(inner, string_builder.new()))
   use <- bool.guard(when: inner_empty, return: Error(InnerEmpty))
-  let documents_empty =
-    string_builder.is_empty(result.unwrap(document, string_builder.new()))
-  use <- bool.guard(when: documents_empty, return: Error(TagPlacedBeforeNew))
   let options_empty = list.is_empty(options)
   use <- bool.guard(when: options_empty, return: Error(OptionsEmpty))
 
@@ -249,11 +237,28 @@ pub fn option_block_tag(
 /// takes in the Xml Document and outputs
 /// a Result(String, BuilderError)
 pub fn end_xml(document: XmlBuilder) -> Result(String, BuilderError) {
-  let document_empty =
-    string_builder.is_empty(result.unwrap(document, string_builder.new()))
-  use <- bool.guard(when: document_empty, return: Error(EmptyDocument))
+  case result.is_error(document) {
+    True -> Error(result.unwrap_error(document, NOTAPPLICABLE))
 
-  result.unwrap(document, string_builder.new())
-  |> string_builder.to_string
+    False ->
+      case
+        string_builder.is_empty(result.unwrap(document, string_builder.new()))
+      {
+        True -> Error(EmptyDocument)
+
+        False ->
+          result.unwrap(document, string_builder.new())
+          |> string_builder.to_string
+          |> Ok
+      }
+  }
+}
+
+pub fn end(inner: XmlBuilder) -> XmlBuilder {
+  let inner_empty =
+    string_builder.is_empty(result.unwrap(inner, string_builder.new()))
+  use <- bool.guard(when: inner_empty, return: Error(EmptyDocument))
+
+  result.unwrap(inner, string_builder.new())
   |> Ok
 }
