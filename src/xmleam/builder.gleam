@@ -48,7 +48,7 @@ pub fn basic_tag(
 /// "IDK why you would use this")
 /// -> 
 /// <enclosure url="https://example.com"> IDK why you would use this </enclosure>
-pub fn opts_cont_tag(
+pub fn option_content_tag(
   tag_name: String,
   options: List(Option),
   contents: List(String),
@@ -75,7 +75,7 @@ pub fn opts_cont_tag(
   |> Ok
 }
 
-pub fn opts_tag(
+pub fn option_tag(
   tag_name: String,
   options: List(Option),
 ) -> Result(String, XmlError) {
