@@ -26,14 +26,11 @@ pub fn main() {
           new()
           |> tag("title", "Example RSS Feed")
           |> tag("description", "this is a teaching example for xmleam")
-          |> end()
         })
         |> block_tag("item", {
           new()
           |> tag("title", "Example Item")
-          |> end()
         })
-        |> end()
       },
     )
     |> end_xml()

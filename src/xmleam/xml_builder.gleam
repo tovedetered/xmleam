@@ -65,6 +65,7 @@ pub fn new_advanced_document(version: String, encoding: String) -> XmlBuilder {
 }
 
 /// this function starts the blocks inside of tags
+/// because of the requirement of document and not having be optional
 pub fn new() -> XmlBuilder {
   string_builder.new()
   |> Ok
@@ -273,13 +274,4 @@ pub fn end_xml(document: XmlBuilder) -> Result(String, BuilderError) {
           |> Ok
       }
   }
-}
-
-pub fn end(inner: XmlBuilder) -> XmlBuilder {
-  let inner_empty =
-    string_builder.is_empty(result.unwrap(inner, string_builder.new()))
-  use <- bool.guard(when: inner_empty, return: Error(EmptyDocument))
-
-  result.unwrap(inner, string_builder.new())
-  |> Ok
 }

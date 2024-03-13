@@ -1,8 +1,8 @@
 import gleam/io
 import gleam/result
 import xmleam/xml_builder.{
-  Opt, block_tag, end, end_xml, new, option_block_tag, option_content_tag,
-  option_tag, tag,
+  Opt, block_tag, end_xml, new, option_block_tag, option_content_tag, option_tag,
+  tag,
 }
 
 pub fn main() {
@@ -17,14 +17,11 @@ pub fn main() {
           new()
           |> tag("title", "Example RSS Feed")
           |> tag("description", "this is a teaching example for xmleam")
-          |> end()
         })
         |> block_tag("item", {
           new()
           |> tag("title", "Example Item")
-          |> end()
         })
-        |> end()
       },
     )
     |> end_xml()
