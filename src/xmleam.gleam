@@ -30,7 +30,7 @@ pub fn main() {
     |> end_xml()
   }
 
-  io.debug(result.unwrap(document, "ERROR"))
+  io.println(result.unwrap(document, "ERROR"))
 
   let document = {
     xml_builder.new_document()
@@ -42,5 +42,5 @@ pub fn main() {
     |> end_xml()
   }
 
-  io.debug(result.unwrap(document, "ERROR"))
+  io.println(result.unwrap(document, "ERROR"))
 }
