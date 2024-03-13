@@ -43,7 +43,7 @@ pub type XmlBuilder =
 /// use new_advanced_document(version, encoding)
 pub fn new_document() -> XmlBuilder {
   string_builder.new()
-  |> string_builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+  |> string_builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
   |> Ok
 }
 
@@ -94,7 +94,10 @@ pub fn tag(document: XmlBuilder, label: String, contents: String) -> XmlBuilder 
       |> append(" </")
       |> append(label)
       |> append("> \n")
-      |> append_builder(result.unwrap(document, string_builder.new()))
+      |> append_builder(
+        to: result.unwrap(document, string_builder.new()),
+        suffix: _,
+      )
       |> Ok
   }
 }
@@ -127,7 +130,10 @@ pub fn option_content_tag(
       |> append(" </")
       |> append(label)
       |> append("> \n")
-      |> append_builder(result.unwrap(document, string_builder.new()))
+      |> append_builder(
+        to: result.unwrap(document, string_builder.new()),
+        suffix: _,
+      )
       |> Ok
   }
 }
@@ -149,7 +155,10 @@ pub fn option_tag(document: XmlBuilder, label: String, options: List(Option)) {
       |> append(label)
       |> append_builder(string_options(options))
       |> append(" />\n")
-      |> append_builder(result.unwrap(document, string_builder.new()))
+      |> append_builder(
+        to: result.unwrap(document, string_builder.new()),
+        suffix: _,
+      )
       |> Ok
   }
 }
@@ -190,11 +199,15 @@ pub fn block_tag(document: XmlBuilder, label: String, inner: XmlBuilder) {
           string_builder.new()
           |> append("<")
           |> append(label)
-          |> append("> \n \t")
+          |> append("> \n")
           |> append_builder(result.unwrap(inner, string_builder.new()))
           |> append("</")
           |> append(label)
           |> append("> \n")
+          |> append_builder(
+            to: result.unwrap(document, string_builder.new()),
+            suffix: _,
+          )
           |> Ok
       }
   }
@@ -202,10 +215,10 @@ pub fn block_tag(document: XmlBuilder, label: String, inner: XmlBuilder) {
 
 /// This is a block tag that has options
 pub fn option_block_tag(
-  label: String,
-  inner: XmlBuilder,
-  options: List(Option),
   document: XmlBuilder,
+  label: String,
+  options: List(Option),
+  inner: XmlBuilder,
 ) {
   let label_empty = string.is_empty(label)
   use <- bool.guard(when: label_empty, return: Error(LabelEmpty))
@@ -219,17 +232,25 @@ pub fn option_block_tag(
     True -> Error(result.unwrap_error(document, NOTAPPLICABLE))
 
     False ->
-      string_builder.new()
-      |> append("<")
-      |> append(label)
-      |> append_builder(string_options(options))
-      |> append("> ")
-      |> append_builder(result.unwrap(inner, string_builder.new()))
-      |> append(" </")
-      |> append(label)
-      |> append("> \n")
-      |> append_builder(result.unwrap(document, string_builder.new()))
-      |> Ok
+      case result.is_error(inner) {
+        True -> Error(result.unwrap_error(document, NOTAPPLICABLE))
+
+        False ->
+          string_builder.new()
+          |> append("<")
+          |> append(label)
+          |> append_builder(string_options(options))
+          |> append("> \n")
+          |> append_builder(result.unwrap(inner, string_builder.new()))
+          |> append(" </")
+          |> append(label)
+          |> append("> \n")
+          |> append_builder(
+            to: result.unwrap(document, string_builder.new()),
+            suffix: _,
+          )
+          |> Ok
+      }
   }
 }
 
