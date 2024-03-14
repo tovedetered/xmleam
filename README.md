@@ -3,9 +3,13 @@
 [![Package Version](https://img.shields.io/hexpm/v/xmleam)](https://hex.pm/packages/xmleam)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/xmleam/)
 
+
 ```sh
 gleam add xmleam
 ```
+
+To add to a Gleam Project  ^
+
 ```gleam
 import gleam/io
 import gleam/result
