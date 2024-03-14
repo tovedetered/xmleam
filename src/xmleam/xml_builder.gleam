@@ -38,8 +38,8 @@ pub type Option {
 pub type XmlBuilder =
   Result(string_builder.StringBuilder, BuilderError)
 
-/// this function starts the builder and 
-/// this function assumes version 1.0 and encoding UTF-8 if you need specific verisons or encoding
+/// starts the builder and assumes version 1.0 and encoding UTF-8, 
+/// if you need specific verisons or encoding
 /// use new_advanced_document(version, encoding)
 pub fn new_document() -> XmlBuilder {
   string_builder.new()
@@ -47,7 +47,7 @@ pub fn new_document() -> XmlBuilder {
   |> Ok
 }
 
-/// this funcion starts the builder and 
+/// starts the builder and 
 /// allows you to put in your own version and encoding
 pub fn new_advanced_document(version: String, encoding: String) -> XmlBuilder {
   let version_empty = string.is_empty(version)
@@ -64,14 +64,14 @@ pub fn new_advanced_document(version: String, encoding: String) -> XmlBuilder {
   |> Ok
 }
 
-/// this function starts the blocks inside of tags
-/// because of the requirement of document and not having be optional
+/// starts the blocks inside of tags because of the requirement 
+/// of document and not having be optional
 pub fn new() -> XmlBuilder {
   string_builder.new()
   |> Ok
 }
 
-/// this is a basic tag that takes in a label and contents and a 
+/// Basic tag that takes in a label and contents and a 
 /// document in the form of an XmlBuilder
 /// this is intended to be used in a pipe chain
 /// ie. new_document() 
@@ -103,7 +103,7 @@ pub fn tag(document: XmlBuilder, label: String, contents: String) -> XmlBuilder 
   }
 }
 
-/// This is for a tag with options and content
+/// Tag with options and content
 /// ie. <hello world="hi"> ?? <hello> 
 pub fn option_content_tag(
   document: XmlBuilder,
@@ -139,7 +139,7 @@ pub fn option_content_tag(
   }
 }
 
-///This is a tag with options that self-closes 
+///Tag with options that self-closes 
 /// ie. <link href="https://example.com" />
 pub fn option_tag(document: XmlBuilder, label: String, options: List(Option)) {
   let label_empty = string.is_empty(label)
@@ -173,7 +173,7 @@ fn option_to_string(option: Option) {
   string_builder.from_strings([" ", option.label, "=\"", option.value, "\""])
 }
 
-/// this starts a block which is a tag with other tags inside of it
+/// Starts a block which is a tag with other tags inside of it
 /// ie. <owner>
 ///         <email>example@example.com</email>
 ///     </owner>
@@ -214,7 +214,7 @@ pub fn block_tag(document: XmlBuilder, label: String, inner: XmlBuilder) {
   }
 }
 
-/// This is a block tag that has options
+/// block tag that also has options
 pub fn option_block_tag(
   document: XmlBuilder,
   label: String,
@@ -255,8 +255,8 @@ pub fn option_block_tag(
   }
 }
 
-/// this one ends the xml document
-/// takes in the Xml Document and outputs
+/// Ends the XML document
+/// takes in the XML Document and outputs
 /// a Result(String, BuilderError)
 pub fn end_xml(document: XmlBuilder) -> Result(String, BuilderError) {
   case result.is_error(document) {
