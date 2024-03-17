@@ -277,6 +277,8 @@ pub fn comment(document: XmlBuilder, comment: String) -> XmlBuilder {
   }
 }
 
+///This is a funciton for a block comment, works like block_tag
+/// but does not take a label
 pub fn block_comment(document: XmlBuilder, inner: XmlBuilder) {
   let inner_empty =
     string_builder.is_empty(result.unwrap(inner, string_builder.new()))
