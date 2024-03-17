@@ -49,4 +49,19 @@ pub fn xml_builder_full_test() {
   |> should.equal(
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<link href=\"https://example.com\" idk=\"N/A\" />\n<hello world=\"Earth\"> AAAAAAA </hello> \n",
   )
+
+  xml_builder.new()
+  |> xml_builder.comment("This is a comment")
+  |> end_xml()
+  |> result.unwrap("ERROR")
+  |> should.equal("<!-- This is a comment --> \n")
+
+  xml_builder.new()
+  |> xml_builder.block_comment({
+    xml_builder.new()
+    |> tag("hello", "world")
+  })
+  |> end_xml()
+  |> result.unwrap("ERROR")
+  |> should.equal("<!-- \n<hello> world </hello> \n--> \n")
 }

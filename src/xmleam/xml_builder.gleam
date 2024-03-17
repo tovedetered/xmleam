@@ -255,6 +255,54 @@ pub fn option_block_tag(
   }
 }
 
+///This a comment function, works the same way as any other tag 
+/// But makes whatever you put in as a string a comment
+pub fn comment(document: XmlBuilder, comment: String) -> XmlBuilder {
+  let comments_empty = string.is_empty(comment)
+  use <- bool.guard(when: comments_empty, return: Error(ContentsEmpty))
+
+  case result.is_error(document) {
+    True -> Error(result.unwrap_error(document, NOTAPPLICABLE))
+
+    False ->
+      string_builder.new()
+      |> append("<!-- ")
+      |> append(comment)
+      |> append(" --> \n")
+      |> append_builder(
+        to: result.unwrap(document, string_builder.new()),
+        suffix: _,
+      )
+      |> Ok
+  }
+}
+
+pub fn block_comment(document: XmlBuilder, inner: XmlBuilder) {
+  let inner_empty =
+    string_builder.is_empty(result.unwrap(inner, string_builder.new()))
+  use <- bool.guard(when: inner_empty, return: Error(InnerEmpty))
+
+  case result.is_error(document) {
+    True -> Error(result.unwrap_error(document, NOTAPPLICABLE))
+
+    False ->
+      case result.is_error(inner) {
+        True -> Error(result.unwrap_error(inner, NOTAPPLICABLE))
+
+        False ->
+          string_builder.new()
+          |> append("<!-- \n")
+          |> append_builder(result.unwrap(inner, string_builder.new()))
+          |> append("--> \n")
+          |> append_builder(
+            to: result.unwrap(document, string_builder.new()),
+            suffix: _,
+          )
+          |> Ok
+      }
+  }
+}
+
 /// Ends the XML document
 /// takes in the XML Document and outputs
 /// a Result(String, BuilderError)

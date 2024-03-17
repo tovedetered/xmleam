@@ -44,11 +44,17 @@ pub fn main() {
 
   let document = {
     xml_builder.new_document()
+    |> xml_builder.comment("Below this is a link example")
     |> option_tag("link", [
       Opt("href", "https://example.com"),
       Opt("idk", "N/A"),
     ])
-    |> option_content_tag("hello", [Opt("world", "Earth")], "AAAAAAA")
+    |> xml_builder.block_comment({
+      {
+        xml_builder.new()
+        |> option_content_tag("hello", [Opt("world", "Earth")], "AAAAAAA")
+      }
+    })
     |> end_xml()
   }
 
@@ -69,8 +75,11 @@ pub fn main() {
 </rss> 
 
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Below this is a link example --> 
 <link href="https://example.com" idk="N/A" />
+<!-- 
 <hello world="Earth"> AAAAAAA </hello> 
+-->  
 ```
 
 Further documentation can be found at <https://hexdocs.pm/xmleam>.

@@ -31,11 +31,17 @@ pub fn main() {
 
   let document = {
     xml_builder.new_document()
+    |> xml_builder.comment("Below this is a link example")
     |> option_tag("link", [
       Opt("href", "https://example.com"),
       Opt("idk", "N/A"),
     ])
-    |> option_content_tag("hello", [Opt("world", "Earth")], "AAAAAAA")
+    |> xml_builder.block_comment({
+      {
+        xml_builder.new()
+        |> option_content_tag("hello", [Opt("world", "Earth")], "AAAAAAA")
+      }
+    })
     |> end_xml()
   }
 
