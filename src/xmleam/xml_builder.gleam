@@ -12,11 +12,11 @@
 ////    <hello> world </hello>
 //// </name>
 
-import gleam/string_builder.{append, append_builder}
-import gleam/string
-import gleam/result
 import gleam/bool
 import gleam/list
+import gleam/result
+import gleam/string
+import gleam/string_builder.{append, append_builder}
 
 pub type BuilderError {
   ContentsEmpty

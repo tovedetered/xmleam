@@ -52,7 +52,7 @@ pub fn main() {
     |> xml_builder.block_comment({
       {
         xml_builder.new()
-        |> option_content_tag("hello", [Opt("world", "Earth")], "AAAAAAA")
+        |> option_content_tag("hello", [Opt("world", "Earth")], "North America")
       }
     })
     |> end_xml()
@@ -78,7 +78,7 @@ pub fn main() {
 <!-- Below this is a link example --> 
 <link href="https://example.com" idk="N/A" />
 <!-- 
-<hello world="Earth"> AAAAAAA </hello> 
+<hello world="Earth"> North America </hello> 
 -->  
 ```
 
