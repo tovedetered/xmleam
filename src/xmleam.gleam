@@ -46,4 +46,16 @@ pub fn main() {
   }
 
   io.println(result.unwrap(document, "ERROR"))
+
+  let document = {
+    xml_builder.new()
+    |> xml_builder.cdata_tag(
+      "link",
+      "<a href=\"https://example.com\"> link </a>",
+    )
+    |> xml_builder.end_xml
+    |> result.unwrap("ERROR")
+  }
+
+  io.debug(document)
 }

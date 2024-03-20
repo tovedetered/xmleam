@@ -1,10 +1,10 @@
+import gleam/result
 import gleeunit
 import gleeunit/should
 import xmleam/xml_builder.{
   Opt, block_tag, end_xml, new, option_block_tag, option_content_tag, option_tag,
   tag,
 }
-import gleam/result
 
 pub fn main() {
   gleeunit.main()
@@ -14,6 +14,16 @@ pub fn main() {
 pub fn hello_world_test() {
   1
   |> should.equal(1)
+}
+
+pub fn xml_builder_cdata_test() {
+  xml_builder.new()
+  |> xml_builder.cdata_tag("link", "<a href=\"https://example.com\"> link </a>")
+  |> xml_builder.end_xml
+  |> result.unwrap("ERROR")
+  |> should.equal(
+    "<link> \n<![CDATA[\n \t<a href=\"https://example.com\"> link </a>\n]]> \n</link> \n",
+  )
 }
 
 ///Test all of the functions
