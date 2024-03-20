@@ -103,6 +103,34 @@ pub fn tag(document: XmlBuilder, label: String, contents: String) -> XmlBuilder 
   }
 }
 
+pub fn cdata_tag(document: XmlBuilder, label: String, contents: String) {
+  let label_empty = string.is_empty(label)
+  use <- bool.guard(when: label_empty, return: Error(LabelEmpty))
+  let contents_empty = string.is_empty(contents)
+  use <- bool.guard(when: contents_empty, return: Error(ContentsEmpty))
+
+  case result.is_error(document) {
+    True -> Error(result.unwrap_error(document, NOTAPPLICABLE))
+
+    False ->
+      string_builder.new()
+      |> append("<")
+      |> append(label)
+      |> append("> \n")
+      |> append("<![CDATA[\n \t")
+      |> append(contents)
+      |> append("\n]]> \n")
+      |> append("</")
+      |> append(label)
+      |> append("> \n")
+      |> append_builder(
+        to: result.unwrap(document, string_builder.new()),
+        suffix: _,
+      )
+      |> Ok
+  }
+}
+
 /// Tag with options and content
 /// ie. <hello world="hi"> ?? <hello> 
 pub fn option_content_tag(
