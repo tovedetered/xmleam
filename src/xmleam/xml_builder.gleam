@@ -103,6 +103,9 @@ pub fn tag(document: XmlBuilder, label: String, contents: String) -> XmlBuilder 
   }
 }
 
+/// this is a basic tag that automatically adds the CDATA tag to the XML
+/// NOTE: This same effect can be created with any other tag by adding
+/// <![CDATA[ ... ]]> to the content blocks, this is just for convienence
 pub fn cdata_tag(document: XmlBuilder, label: String, contents: String) {
   let label_empty = string.is_empty(label)
   use <- bool.guard(when: label_empty, return: Error(LabelEmpty))
