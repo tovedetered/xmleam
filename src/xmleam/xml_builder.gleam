@@ -60,7 +60,7 @@ pub fn new_advanced_document(version: String, encoding: String) -> XmlBuilder {
   |> string_builder.append(version)
   |> string_builder.append("\" encoding=\"")
   |> string_builder.append(encoding)
-  |> string_builder.append("\"?> \n")
+  |> string_builder.append("\"?>\n")
   |> Ok
 }
 
@@ -90,11 +90,11 @@ pub fn tag(document: XmlBuilder, label: String, contents: String) -> XmlBuilder 
       string_builder.new()
       |> append("<")
       |> append(label)
-      |> append("> ")
+      |> append(">")
       |> append(contents)
-      |> append(" </")
+      |> append("</")
       |> append(label)
-      |> append("> \n")
+      |> append(">\n")
       |> append_builder(
         to: result.unwrap(document, string_builder.new()),
         suffix: _,
@@ -119,13 +119,13 @@ pub fn cdata_tag(document: XmlBuilder, label: String, contents: String) {
       string_builder.new()
       |> append("<")
       |> append(label)
-      |> append("> \n")
+      |> append(">\n")
       |> append("<![CDATA[\n \t")
       |> append(contents)
-      |> append("\n]]> \n")
+      |> append("\n]]>\n")
       |> append("</")
       |> append(label)
-      |> append("> \n")
+      |> append(">\n")
       |> append_builder(
         to: result.unwrap(document, string_builder.new()),
         suffix: _,
@@ -157,11 +157,11 @@ pub fn option_content_tag(
       |> append("<")
       |> append(label)
       |> append_builder(string_options(options))
-      |> append("> ")
+      |> append(">")
       |> append(contents)
-      |> append(" </")
+      |> append("</")
       |> append(label)
-      |> append("> \n")
+      |> append(">\n")
       |> append_builder(
         to: result.unwrap(document, string_builder.new()),
         suffix: _,
@@ -186,7 +186,7 @@ pub fn option_tag(document: XmlBuilder, label: String, options: List(Option)) {
       |> append("<")
       |> append(label)
       |> append_builder(string_options(options))
-      |> append(" />\n")
+      |> append("/>\n")
       |> append_builder(
         to: result.unwrap(document, string_builder.new()),
         suffix: _,
@@ -231,11 +231,11 @@ pub fn block_tag(document: XmlBuilder, label: String, inner: XmlBuilder) {
           string_builder.new()
           |> append("<")
           |> append(label)
-          |> append("> \n")
+          |> append(">\n")
           |> append_builder(result.unwrap(inner, string_builder.new()))
           |> append("</")
           |> append(label)
-          |> append("> \n")
+          |> append(">\n")
           |> append_builder(
             to: result.unwrap(document, string_builder.new()),
             suffix: _,
@@ -272,11 +272,11 @@ pub fn option_block_tag(
           |> append("<")
           |> append(label)
           |> append_builder(string_options(options))
-          |> append("> \n")
+          |> append(">\n")
           |> append_builder(result.unwrap(inner, string_builder.new()))
-          |> append(" </")
+          |> append("</")
           |> append(label)
-          |> append("> \n")
+          |> append(">\n")
           |> append_builder(
             to: result.unwrap(document, string_builder.new()),
             suffix: _,
@@ -324,9 +324,9 @@ pub fn block_comment(document: XmlBuilder, inner: XmlBuilder) {
 
         False ->
           string_builder.new()
-          |> append("<!-- \n")
+          |> append("<!--\n")
           |> append_builder(result.unwrap(inner, string_builder.new()))
-          |> append("--> \n")
+          |> append("-->\n")
           |> append_builder(
             to: result.unwrap(document, string_builder.new()),
             suffix: _,

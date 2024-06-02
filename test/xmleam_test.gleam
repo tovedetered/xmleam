@@ -22,7 +22,7 @@ pub fn xml_builder_cdata_test() {
   |> xml_builder.end_xml
   |> result.unwrap("ERROR")
   |> should.equal(
-    "<link> \n<![CDATA[\n \t<a href=\"https://example.com\"> link </a>\n]]> \n</link> \n",
+    "<link>\n<![CDATA[\n \t<a href=\"https://example.com\"> link </a>\n]]>\n</link>\n",
   )
 }
 
@@ -48,7 +48,7 @@ pub fn xml_builder_full_test() {
   |> end_xml()
   |> result.unwrap("ERROR")
   |> should.equal(
-    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rss xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\"> \n<channel> \n<title> Example RSS Feed </title> \n<description> this is a teaching example for xmleam </description> \n</channel> \n<item> \n<title> Example Item </title> \n</item> \n </rss> \n",
+    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rss xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\">\n<channel>\n<title>Example RSS Feed</title>\n<description>this is a teaching example for xmleam</description>\n</channel>\n<item>\n<title>Example Item</title>\n</item>\n</rss>\n",
   )
 
   xml_builder.new_document()
@@ -57,7 +57,7 @@ pub fn xml_builder_full_test() {
   |> end_xml()
   |> result.unwrap("ERROR")
   |> should.equal(
-    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<link href=\"https://example.com\" idk=\"N/A\" />\n<hello world=\"Earth\"> AAAAAAA </hello> \n",
+    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<link href=\"https://example.com\" idk=\"N/A\"/>\n<hello world=\"Earth\">AAAAAAA</hello>\n",
   )
 
   xml_builder.new()
@@ -73,5 +73,5 @@ pub fn xml_builder_full_test() {
   })
   |> end_xml()
   |> result.unwrap("ERROR")
-  |> should.equal("<!-- \n<hello> world </hello> \n--> \n")
+  |> should.equal("<!--\n<hello>world</hello>\n-->\n")
 }
