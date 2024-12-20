@@ -1,7 +1,7 @@
-import gleam/string
-import gleam/string_builder
 import gleam/bool
 import gleam/list
+import gleam/string
+import gleam/string_tree
 
 pub type XmlError {
   ContentsEmpty
@@ -32,15 +32,15 @@ pub fn basic_tag(
 
   let string_contents = string.concat(contents)
 
-  string_builder.new()
-  |> string_builder.append("<")
-  |> string_builder.append(tag_name)
-  |> string_builder.append("> ")
-  |> string_builder.append(string_contents)
-  |> string_builder.append(" </")
-  |> string_builder.append(tag_name)
-  |> string_builder.append("> \n")
-  |> string_builder.to_string()
+  string_tree.new()
+  |> string_tree.append("<")
+  |> string_tree.append(tag_name)
+  |> string_tree.append("> ")
+  |> string_tree.append(string_contents)
+  |> string_tree.append(" </")
+  |> string_tree.append(tag_name)
+  |> string_tree.append("> \n")
+  |> string_tree.to_string()
   |> Ok
 }
 
@@ -64,16 +64,16 @@ pub fn option_content_tag(
 
   let string_contents = string.concat(contents)
 
-  string_builder.new()
-  |> string_builder.append("<")
-  |> string_builder.append(tag_name)
-  |> string_builder.append(string_options(options))
-  |> string_builder.append("> \n ")
-  |> string_builder.append(string_contents)
-  |> string_builder.append(" </")
-  |> string_builder.append(tag_name)
-  |> string_builder.append("> \n")
-  |> string_builder.to_string
+  string_tree.new()
+  |> string_tree.append("<")
+  |> string_tree.append(tag_name)
+  |> string_tree.append(string_options(options))
+  |> string_tree.append("> \n ")
+  |> string_tree.append(string_contents)
+  |> string_tree.append(" </")
+  |> string_tree.append(tag_name)
+  |> string_tree.append("> \n")
+  |> string_tree.to_string
   |> Ok
 }
 
@@ -87,12 +87,12 @@ pub fn option_tag(
   let contents_empty = list.is_empty(options)
   use <- bool.guard(when: contents_empty, return: Error(ContentsEmpty))
 
-  string_builder.new()
-  |> string_builder.append("<")
-  |> string_builder.append(tag_name)
-  |> string_builder.append(string_options(options))
-  |> string_builder.append(" /> \n")
-  |> string_builder.to_string()
+  string_tree.new()
+  |> string_tree.append("<")
+  |> string_tree.append(tag_name)
+  |> string_tree.append(string_options(options))
+  |> string_tree.append(" /> \n")
+  |> string_tree.to_string()
   |> Ok()
 }
 
@@ -112,14 +112,14 @@ pub fn xml(
 
   let document = string.concat(document_parts)
 
-  string_builder.new()
-  |> string_builder.append("<?xml version=\"")
-  |> string_builder.append(version)
-  |> string_builder.append("\" encoding=\"")
-  |> string_builder.append(encoding)
-  |> string_builder.append("\"?> \n")
-  |> string_builder.append(document)
-  |> string_builder.to_string
+  string_tree.new()
+  |> string_tree.append("<?xml version=\"")
+  |> string_tree.append(version)
+  |> string_tree.append("\" encoding=\"")
+  |> string_tree.append(encoding)
+  |> string_tree.append("\"?> \n")
+  |> string_tree.append(document)
+  |> string_tree.to_string
   |> Ok
 }
 
