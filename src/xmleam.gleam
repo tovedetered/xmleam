@@ -57,5 +57,5 @@ pub fn main() {
     |> result.unwrap("ERROR")
   }
 
-  io.debug(document)
+  io.println(document)
 }
